@@ -1,5 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const BearerStrategy = require('passport-http-bearer').Strategy;
+const jwt = require('jsonwebtoken');
 
 passport.use(
     new LocalStrategy({
@@ -13,5 +15,20 @@ passport.use(
         // se a senha for igual, done(null, usuario)
         // se a senha for diferente - mensagem: 'Usuario/senha errado'
         done(null, {})
+    })
+);
+
+passport.use(
+    new BearerStrategy((token, done) => {
+        try {
+            //Fluxo feliz
+            const payload = jwt.verify(token, 'senha-secreta');
+            console.log(payload); //só para verificar o payload retornado
+            const usuario = {}; // const usuario = buscar no banco dados 
+            done(null, usuario, { token: token });
+        } catch (error) {
+            //Fluxo com erro
+            done(error);   
+        }
     })
 );
