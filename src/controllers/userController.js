@@ -4,7 +4,7 @@ function createToken() {
     const payload = {
         id: 'usuario.id'
     };
-    return jwt.sign(payload, 'senha-secreta');
+    return jwt.sign(payload, 'senha-secreta', { expiresIn: '15m' });
 }
 
 module.exports = {
