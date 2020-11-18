@@ -4,6 +4,14 @@ const accountsCollection = require('./accountSchema');
 const { InvalidArgumentError } = require('../models/errors');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
+async function verificaSenha(senha, senhaHash) {
+    const senhaValida = await bcrypt.compare(senha, senhaHash);
+    if (!senhaValida) {
+        throw new InvalidArgumentError('Senha inválida!');
+    }
+}
 
 passport.use(
     new LocalStrategy({
@@ -12,18 +20,19 @@ passport.use(
         session: false
     }, (email, senha, done) => {
         console.log(process.env.CHAVE_JWT);
-        accountsCollection.findOne({ 'email': email}, function(err, user) {
-            if (err){
-                console.log('Error in SignUp: ' + err);
-                return done(err);
+        accountsCollection.findOne({ 'email': email}, async function(err, user) {
+
+            try {
+                if(!user) {
+                    throw new InvalidArgumentError('Usuário inválido!');
+                } 
+                await verificaSenha(senha, user.senha);
+                console.log(user);
+                done(null, user);
+            } catch (error) {
+                done(error);
             }
-            if(!user) {
-                throw new InvalidArgumentError('Usuário inválido!');
-            } else if(senha != user.senha) {
-                throw new InvalidArgumentError('Senha inválida!');
-            }
-            console.log(user);
-            done(null, user);
+            
         });
 
     })

@@ -1,9 +1,11 @@
 const accountsCollection = require('../models/accountSchema');
+const bcrypt = require('bcrypt');
 
 module.exports = {
     
-    add: (request, response) => {
+    add: async (request, response) => {
         const body = request.body;
+        body.senha = await bcrypt.hash(body.senha, 12);
         const account = new accountsCollection(body);
 
         account.save((error) => {
