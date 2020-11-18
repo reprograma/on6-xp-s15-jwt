@@ -15,7 +15,6 @@ module.exports = {
     },
 
     get: (request, response) => {
-        console.log(request.url);
         accountsCollection.find((error, accounts) => {
             if(error) {
                 return response.status(500).send(error);
