@@ -6,7 +6,7 @@ const BearerStrategy = require('passport-http-bearer').Strategy;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-async function verificaSenha(senha, senhaHash) {
+async function verificaSenha(senha, senhaHash){
     const senhaValida = await bcrypt.compare(senha, senhaHash);
     if (!senhaValida) {
         throw new InvalidArgumentError('Senha inválida!');
@@ -19,9 +19,7 @@ passport.use(
         passwordField: 'senha',
         session: false
     }, (email, senha, done) => {
-        console.log(process.env.CHAVE_JWT);
         accountsCollection.findOne({ 'email': email}, async function(err, user) {
-
             try {
                 if(!user) {
                     throw new InvalidArgumentError('Usuário inválido!');
